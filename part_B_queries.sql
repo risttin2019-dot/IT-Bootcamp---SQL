@@ -78,7 +78,7 @@ Harbourside Park	44074.05	    84.76	    0	    0
 SELECT 
     r.referee_name,
     COUNT(DISTINCT m.match_id) AS match_num,
-    COUNT(CASE WHEN me.event_type IN ('yellow_card', 'second_yellow', 'red_card') THEN 1 END) / COUNT(DISTINCT m.match_id) AS card_num
+    COUNT(CASE WHEN me.event_type IN ('yellow_card', 'second_yellow', 'red_card') THEN 1 END) / COUNT(DISTINCT m.match_id) AS avg_card
 FROM matches m     
 INNER JOIN referees r ON r.referee_id = m.referee_id
 LEFT JOIN match_events me ON me.match_id = m.match_id
