@@ -118,8 +118,8 @@ LIMIT 1;
 
 SELECT
     r.referee_name,
-    COUNT(CASE WHEN me.event_type IN ('penalty_goal', 'penalty_miss') THEN 1 END),
-    ROUND(COUNT(CASE WHEN me.event_type IN ('penalty_goal', 'penalty_miss') THEN 1 END) / COUNT(DISTINCT m.match_id) * 100, 2) AS penalty_pct
+    COUNT(DISTINCT CASE WHEN me.event_type IN ('penalty_goal', 'penalty_miss') THEN m.match_id END) AS penalty_matches,
+    ROUND(COUNT(DISTINCT CASE WHEN me.event_type IN ('penalty_goal', 'penalty_miss') THEN m.match_id END) / COUNT(DISTINCT m.match_id) * 100, 2) AS penalty_pct
 FROM matches m    
 INNER JOIN referees r ON r.referee_id = m.referee_id
 LEFT JOIN match_events me ON me.match_id = m.match_id
@@ -127,7 +127,7 @@ WHERE season = '2024/25'
 GROUP BY r.referee_id, r.referee_name
 ORDER BY penalty_pct DESC;
 
--- A9: Peter Lindgren je sudija koji je u 14 utakmica (70%) dosudio penal na utakmicama koje je sudio u sezoni 2024/25.
+-- A9: Peter Lindgren je sudija koji je u 9 od 20 utakmica (45%) dosudio penal na utakmicama koje je sudio u sezoni 2024/25.
 
 
 -- 10. zadatak
