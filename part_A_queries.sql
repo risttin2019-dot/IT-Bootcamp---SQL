@@ -128,3 +128,42 @@ GROUP BY r.referee_id, r.referee_name
 ORDER BY penalty_pct DESC;
 
 -- A9: Peter Lindgren je sudija koji je u 14 utakmica (70%) dosudio penal na utakmicama koje je sudio u sezoni 2024/25.
+
+
+-- 10. zadatak
+
+WITH all_points AS (
+    SELECT 
+        ms.manager_name AS manager,
+        CASE 
+            WHEN m.home_goals > m.away_goals THEN 3
+            WHEN m.home_goals = m.away_goals THEN 1
+            ELSE 0 
+        END AS points
+    FROM matches m
+    INNER JOIN manager_spells ms ON ms.team_id = m.home_team_id
+    WHERE m.season = '2024/25'
+      AND m.home_goals_ht < m.away_goals_ht
+      AND m.kickoff_ts BETWEEN ms.start_date AND COALESCE(ms.end_date, '9999-12-31')
+    UNION ALL
+    SELECT 
+        ms.manager_name AS manager,
+        CASE 
+            WHEN m.away_goals > m.home_goals THEN 3
+            WHEN m.away_goals = m.home_goals THEN 1
+            ELSE 0 
+        END AS points
+    FROM matches m
+    INNER JOIN manager_spells ms ON ms.team_id = m.away_team_id
+    WHERE m.season = '2024/25'
+      AND m.away_goals_ht < m.home_goals_ht
+      AND m.kickoff_ts BETWEEN ms.start_date AND COALESCE(ms.end_date, '9999-12-31')
+)
+SELECT 
+    manager,
+    SUM(points) AS total_points
+FROM all_points
+GROUP BY manager
+ORDER BY total_points DESC;
+
+-- A10 = Zoran Tošić 15
